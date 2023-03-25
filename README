@@ -1,0 +1,26 @@
+Path Finding
+Author: Saúl Valdelvira
+======================================
+A graphic program to visualize a
+path finding algorithm.
+
+Dependencies:
+Requires SDL2 library.
+Link: <https://www.libsdl.org/>
+
+Use:
+This is a simple program. You have two points. You can move
+them (right mouse click) and place obstacles (left mouse click).
+A yellow line will allways draw the shortest path between those
+two points, as long as there is one.
+
+Keys:
+- V: Also color the blocks wich have been visited during the search.
+- M: Fill all the grid with obstacles, so you can draw a maze.
+- C: Clear the grid.
+- T: Switch between dark and light theme
+
+How:
+This program uses the A* algorithm to find a path. The heuristic for
+the algorithm is the euclidean distance between two points.
+More info: <https://en.wikipedia.org/wiki/A*_search_algorithm>
