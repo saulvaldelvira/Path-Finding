@@ -80,7 +80,7 @@ void process_key_event(SDL_KeyCode key){
 	case SDLK_c:
 		a_coord.x = (grid_width - 1) / 2;
 		a_coord.y = (grid_height - 1) / 2;
-		b_coord.x = (grid_width - 1) / 2;
+		b_coord.x = (grid_width - 1) / 2 - 1;
 		b_coord.y = (grid_height - 1) / 2;
 		clear_barriers();
 		re_draw_path = SDL_TRUE;
@@ -111,7 +111,7 @@ int main(int argc, char *argv[]){
 	};
 
 	SDL_Rect point_b = {
-		.x = point_a.x,
+		.x = point_a.x - 1,
 		.y = point_a.y,
 		.w = point_a.w,
 		.h = point_a.h
