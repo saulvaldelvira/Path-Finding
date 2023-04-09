@@ -17,6 +17,8 @@ int n_cols;
 Heap open;
 Path path;
 
+bool horizontal_movement = true;
+
 /**
  * Adds the node's neighbours to it's adjacency array.
 */
@@ -25,20 +27,24 @@ static void get_children(Node *node, int x, int y){
 	Node **adj = node->adjacency;
 	if (x - 1 >= 0){
 		adj[n_adj++] = &matrix(y, x-1);
-		if (y + 1 < n_rows){
+		if (horizontal_movement){
+			if (y + 1 < n_rows){
 			adj[n_adj++] = &matrix(y+1, x-1);
-		}
-		if (y - 1 >= 0){
-			adj[n_adj++] = &matrix(y-1,x-1);
+			}
+			if (y - 1 >= 0){
+				adj[n_adj++] = &matrix(y-1,x-1);
+			}
 		}
 	}
 	if (x + 1 < n_cols){
 		adj[n_adj++] = &matrix(y,(x+1));
-		if (y + 1 < n_rows){
+		if (horizontal_movement){
+			if (y + 1 < n_rows){
 			adj[n_adj++] = &matrix(y+1,x+1);
-		}
-		if (y - 1 >= 0){
-			adj[n_adj++] = &matrix(y-1,x+1);
+			}
+			if (y - 1 >= 0){
+				adj[n_adj++] = &matrix(y-1,x+1);
+			}
 		}
 	}
 	if (y + 1 < n_rows){
@@ -216,6 +222,15 @@ void clear_barriers(){
 	for (int i = 0; i < n_rows; ++i){
 		for (int j = 0; j < n_cols; ++j){
 			matrix(i ,j).barrier = false;
+		}
+	}
+}
+
+void switch_horizontal_movement(){
+	horizontal_movement = !horizontal_movement;
+	for (int i = 0; i < n_rows; i++){
+		for (int j = 0; j < n_cols; j++){
+			get_children(&matrix(i ,j), j, i);
 		}
 	}
 }

@@ -92,6 +92,10 @@ void process_key_event(SDL_KeyCode key){
 		theme = theme == DARK ? LIGHT : DARK;
 		set_theme();
 		break;
+	case SDLK_h:
+		switch_horizontal_movement();
+		re_draw_path = SDL_TRUE;
+		break;
 	}
 }
 
@@ -101,7 +105,13 @@ void help(){
 	"Ussage: path-finding -d [...] -w [...]\n"
 	"Arguments:\n"
 	"\t-d <n_rows>x<n_cols> : Set dimensions for the grid\n"
-	"\t-w <width> : Set width of grid's cells\n");
+	"\t-w <width> : Set width of grid's cells\n"
+	"Keybindings:\n"
+	"\t V: Also color the blocks which have been visited during the search.\n"
+	"\t M: Fill all the grid with obstacles, so you can draw a maze.\n"
+	"\t C: Clear the grid.\n"
+	"\t T: Switch between dark and light theme\n"
+	"\t H: Toggle horizontal movement on and off\n");
 }
 
 int main(int argc, char *argv[]){

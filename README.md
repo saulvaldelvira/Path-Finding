@@ -14,10 +14,11 @@ A line will allways draw the shortest path between those
 two points, as long as there is one.
 
 ### Keys:
-- `V`: Also color the blocks wich have been visited during the search.
-- `M`: Fill all the grid with obstacles, so you can draw a maze.
-- `C`: Clear the grid.
+- `V`: Also color the blocks which have been visited during the search
+- `M`: Fill all the grid with obstacles, so you can draw a maze
+- `C`: Clear the grid
 - `T`: Switch between dark and light theme
+- `H`: Toggle horizontal movement on and off
 
 ### How:
 This program uses the A* algorithm to search for paths. <br/>
