@@ -1,6 +1,6 @@
 /**
  * Heap implementation
- * 
+ *
  * Copyright (C) 2023 Saúl Valdelvira
  * License: MIT
  * Last update: 25-03-2022
@@ -116,4 +116,5 @@ bool heap_exists(Heap *heap, Node *node){
         if (heap->elements[node->heap_index] == node){
                 return true;
         }
+        return false;
 }

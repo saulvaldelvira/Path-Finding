@@ -23,4 +23,4 @@ two points, as long as there is one.
 This program uses the A* algorithm to search for paths. <br/>
 More info: <https://en.wikipedia.org/wiki/A*_search_algorithm>
 
-![Screenshot](https://img.saulv.es/path_finding.png)
+![Screenshot](https://img.saulv.es/path_finding.gif)
