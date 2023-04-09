@@ -4,7 +4,8 @@ Author: Saúl Valdelvira <br/>
 A graphic program to visualize a
 path finding algorithm.
 
-### Dependencies:
+### Building:
+You can use the Makefile. <br>
 Requires [SDL2 library](https://www.libsdl.org/).
 
 ### Use:
