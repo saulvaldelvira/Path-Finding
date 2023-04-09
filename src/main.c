@@ -8,7 +8,7 @@
 #include <SDL2/SDL.h>
 #include "path_finding.h"
 
-#define CELL_WIDTH 15
+#define CELL_WIDTH 17
 
 int grid_cell_size;
 int grid_width;
@@ -95,6 +95,8 @@ void process_key_event(SDL_KeyCode key){
 	case SDLK_h:
 		switch_horizontal_movement();
 		re_draw_path = SDL_TRUE;
+		break;
+	default:
 		break;
 	}
 }
@@ -218,7 +220,7 @@ int main(int argc, char *argv[]){
 	SDL_bool click = SDL_FALSE;
 
 	Coordinates last_clicked;
-	int last_button_clicked;
+	int last_button_clicked = 0;
 
 	int x;
 	int y;

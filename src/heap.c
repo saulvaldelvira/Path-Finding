@@ -79,6 +79,7 @@ int heap_add(Heap *heap, Node *node){
         heap->elements[heap->n_elements++] = node;
         node->heap_index = heap->n_elements - 1;
         filter_up(heap, heap->n_elements - 1);
+        return 1;
 }
 
 Node* heap_peek(Heap *heap){
@@ -107,6 +108,7 @@ int heap_change_priority(Heap *heap, Node *node, int g, int h){
         }else{
                 filter_up(heap, node->heap_index);
         }
+        return 1;
 }
 
 bool heap_exists(Heap *heap, Node *node){

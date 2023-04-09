@@ -11,8 +11,8 @@
 
 #include <stdbool.h>
 
-#define N_ROWS 60
-#define N_COLS 100
+#define N_ROWS 50
+#define N_COLS 90
 
 typedef struct Coordinates {
 	int x;

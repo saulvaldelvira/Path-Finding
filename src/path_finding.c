@@ -142,9 +142,6 @@ Path find_path(Coordinates start, Coordinates end){
 		current->visited = true;
 		current->closed = true;
 
-		int x = current->coord.x;
-		int y = current->coord.y;
-
 		for (int i = 0; i < current->n_adjacencies; ++i){
 			Node *child = current->adjacency[i];
 			if (child->barrier){
