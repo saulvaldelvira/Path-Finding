@@ -13,8 +13,8 @@
 #include <stdbool.h>
 
 typedef struct Heap {
-        Node* elements[N_ROWS * N_COLS];
         int n_elements;
+        Node **elements;
 } Heap;
 
 int heap_add(Heap *heap, Node *node);

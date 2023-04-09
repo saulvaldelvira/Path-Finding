@@ -20,7 +20,7 @@ typedef struct Coordinates {
 } Coordinates;
 
 typedef struct Path {
-        Coordinates path[N_ROWS * N_COLS];
+        Coordinates *path;
         int path_length;
 } Path;
 
@@ -46,7 +46,8 @@ bool get_barrier(Coordinates c);
 
 bool get_visited(Coordinates c);
 
-void init_matrix();
+int path_finding_init(int n_rows, int n_cols);
+void path_finding_free();
 
 void prepare_maze(Coordinates pa, Coordinates pb);
 void clear_barriers();

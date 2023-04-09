@@ -8,8 +8,14 @@
 */
 #include "heap.h"
 #include <stdio.h>
+#include <stdlib.h>
 
-static Node matrix[N_ROWS][N_COLS];
+static Node *matrix;
+#define matrix(i,j) matrix[(i) * n_cols + (j)]
+int n_rows;
+int n_cols;
+Heap open;
+Path path;
 
 /**
  * Adds the node's neighbours to it's adjacency array.
@@ -18,44 +24,71 @@ static void get_children(Node *node, int x, int y){
 	int n_adj = 0;
 	Node **adj = node->adjacency;
 	if (x - 1 >= 0){
-		adj[n_adj++] = &matrix[y][x-1];
-		if (y + 1 < N_ROWS){
-			adj[n_adj++] = &matrix[y+1][x-1];
+		adj[n_adj++] = &matrix(y, x-1);
+		if (y + 1 < n_rows){
+			adj[n_adj++] = &matrix(y+1, x-1);
 		}
 		if (y - 1 >= 0){
-			adj[n_adj++] = &matrix[y-1][x-1];
+			adj[n_adj++] = &matrix(y-1,x-1);
 		}
 	}
-	if (x + 1 < N_COLS){
-		adj[n_adj++] = &matrix[y][x+1];
-		if (y + 1 < N_ROWS){
-			adj[n_adj++] = &matrix[y+1][x+1];
+	if (x + 1 < n_cols){
+		adj[n_adj++] = &matrix(y,(x+1));
+		if (y + 1 < n_rows){
+			adj[n_adj++] = &matrix(y+1,x+1);
 		}
 		if (y - 1 >= 0){
-			adj[n_adj++] = &matrix[y-1][x+1];
+			adj[n_adj++] = &matrix(y-1,x+1);
 		}
 	}
-	if (y + 1 < N_ROWS){
-		adj[n_adj++] = &matrix[y+1][x];
+	if (y + 1 < n_rows){
+		adj[n_adj++] = &matrix(y+1,x);
 	}
 	if (y - 1 >= 0){
-		adj[n_adj++] = &matrix[y-1][x];
+		adj[n_adj++] = &matrix((y-1) ,x);
 	}
 	node->n_adjacencies = n_adj;
 }
 
 /**
- * Initializes the matrix.
+ * Initializes the matrix and the helper structures.
 */
-void init_matrix(){
-	for (int i = 0; i < N_ROWS; ++i){
-		for (int j = 0; j < N_COLS; ++j){
-			matrix[i][j].parent = NULL;
-			matrix[i][j].barrier = false;
-			matrix[i][j].coord = (Coordinates) {.x = j, .y = i};
-			get_children(&matrix[i][j], j, i);
+int path_finding_init(int rows, int cols){
+	n_rows = rows;
+	n_cols = cols;
+	matrix = malloc(n_rows * n_cols * sizeof(*matrix));
+	if (!matrix){
+		return -1;
+	}
+	for (int i = 0; i < n_rows; i++){
+		for (int j = 0; j < n_cols; j++){
+			matrix(i ,j).parent = NULL;
+			matrix(i ,j).barrier = false;
+			matrix(i ,j).coord = (Coordinates) {.x = j, .y = i};
+			get_children(&matrix(i ,j), j, i);
 		}
 	}
+	open = (Heap){
+		.n_elements = 0,
+		.elements = malloc(sizeof(Node*) * n_rows * n_cols)
+	};
+	if (!open.elements){
+		return -1;
+	}
+	path = (Path){
+		.path_length = 0,
+		.path = malloc(sizeof(Coordinates*) * n_rows * n_cols)
+	};
+	if (!path.path){
+		return -1;
+	}
+	return 1;
+}
+
+void path_finding_free(){
+	free(matrix);
+	free(open.elements);
+	free(path.path);
 }
 
 /**
@@ -77,19 +110,18 @@ static inline int heuristic(Coordinates c1, Coordinates c2){
  * It returns a Path structure, with an array of coordinates.
 */
 Path find_path(Coordinates start, Coordinates end){
-	for (int i = 0; i < N_ROWS; ++i){
-		for (int j = 0; j < N_COLS; ++j){
-			matrix[i][j].parent = NULL;
-			matrix[i][j].visited = false;
-			matrix[i][j].closed = false;
-			matrix[i][j].heap_index = -1;
+	for (int i = 0; i < n_rows; i++){
+		for (int j = 0; j < n_cols; j++){
+			matrix(i ,j).parent = NULL;
+			matrix(i ,j).visited = false;
+			matrix(i ,j).closed = false;
+			matrix(i ,j).heap_index = -1;
 		}
 	}
-
-	Heap open = {.n_elements = 0};
+	open.n_elements = 0;
 
 	// Put the start node in the heap
-	Node *start_node = &matrix[start.y][start.x];
+	Node *start_node = &matrix(start.y ,start.x);
 	start_node->g = 0;
 	start_node->h = 0;
 	heap_add(&open, start_node);
@@ -140,26 +172,26 @@ Path find_path(Coordinates start, Coordinates end){
 
 	}
 	// Trace back the path
-	Path p = {.path_length = 0};
-	Node *n = &matrix[end.y][end.x];
+	path.path_length = 0;
+	Node *n = &matrix(end.y ,end.x);
 	do{
-		p.path[p.path_length++] = n->coord;
+		path.path[path.path_length++] = n->coord;
 		n = n->parent;
 	}while(n);
 
-	return p;
+	return path;
 }
 
 bool get_visited(Coordinates c){
-	return matrix[c.y][c.x].visited;
+	return matrix(c.y ,c.x).visited;
 }
 
 void put_barrier(Coordinates c){
-	matrix[c.y][c.x].barrier = !matrix[c.y][c.x].barrier;
+	matrix(c.y, c.x).barrier = !matrix(c.y, c.x).barrier;
 }
 
 bool get_barrier(Coordinates c){
-	return matrix[c.y][c.x].barrier;
+	return matrix(c.y ,c.x).barrier;
 }
 
 /**
@@ -168,10 +200,10 @@ bool get_barrier(Coordinates c){
  * which are the two points of the grid.
 */
 void prepare_maze(Coordinates pa, Coordinates pb){
-	for (int i = 0; i < N_ROWS; ++i){
-		for (int j = 0; j < N_COLS; ++j){
+	for (int i = 0; i < n_rows; ++i){
+		for (int j = 0; j < n_cols; ++j){
 			if ((j != pa.x || i != pa.y) && (j != pb.x || i != pb.y)){
-				matrix[i][j].barrier = true;
+				matrix(i ,j).barrier = true;
 			}
 		}
 	}
@@ -181,9 +213,9 @@ void prepare_maze(Coordinates pa, Coordinates pb){
  * Clears all the barriers of the grid.
 */
 void clear_barriers(){
-	for (int i = 0; i < N_ROWS; ++i){
-		for (int j = 0; j < N_COLS; ++j){
-			matrix[i][j].barrier = false;
+	for (int i = 0; i < n_rows; ++i){
+		for (int j = 0; j < n_cols; ++j){
+			matrix(i ,j).barrier = false;
 		}
 	}
 }

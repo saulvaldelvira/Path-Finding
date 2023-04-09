@@ -10,9 +10,9 @@
 
 #define CELL_WIDTH 15
 
-int grid_cell_size = CELL_WIDTH;
-int grid_width = N_COLS;
-int grid_height = N_ROWS;
+int grid_cell_size;
+int grid_width;
+int grid_height;
 
 Coordinates a_coord;
 Coordinates b_coord;
@@ -71,8 +71,8 @@ void process_key_event(SDL_KeyCode key){
 	switch (key){
 	case SDLK_m:
 		a_coord.x = 0;
-		a_coord.y = N_ROWS - 1;
-		b_coord.x = N_COLS - 1;
+		a_coord.y = grid_height - 1;
+		b_coord.x = grid_height - 1;
 		b_coord.y = 0;
 		prepare_maze(a_coord, b_coord);
 		re_draw_path = SDL_TRUE;
@@ -95,8 +95,59 @@ void process_key_event(SDL_KeyCode key){
 	}
 }
 
+void help(){
+	printf(
+	"[Path Finding]\n"
+	"Ussage: path-finding -d [...] -w [...]\n"
+	"Arguments:\n"
+	"\t-d <n_rows>x<n_cols> : Set dimensions for the grid\n"
+	"\t-w <width> : Set width of grid's cells\n");
+}
+
 int main(int argc, char *argv[]){
-	init_matrix();
+	int n_rows = N_ROWS;
+	int n_cols = N_COLS;
+	grid_cell_size = CELL_WIDTH;
+	for (int i = 1; i < argc; i++){
+		if (argv[i][0] != '-'){
+			continue;
+		}
+		switch (argv[i][1]){
+			case 'd':
+				n_rows = atoi(argv[i+1]);
+				char *c = argv[i+1];
+				while (*c != 'x' && *c != 'X' && *c != '\0'){
+					c++;
+				}
+				if (*c == '\0'){
+					fprintf(stderr, "Dimensions must be specified like so: <n_rows>x<n_cols>\n");
+					return 1;
+				}
+				c++;
+				n_cols = atoi(c);
+				if (n_rows <= 0 || n_cols <= 0){
+					fprintf(stderr, "Dimensions must be positive\n");
+				}
+				i++;
+				break;
+			case 'w':
+				grid_cell_size = atoi(argv[i+1]);
+				if (grid_cell_size <= 0){
+					grid_cell_size = CELL_WIDTH;
+				}
+				break;
+			case 'h':
+				help();
+				return 0;
+				break;
+		}
+	}
+	grid_width = n_cols;
+	grid_height = n_rows;
+	if (path_finding_init(n_rows, n_cols) != 1){
+		fprintf(stderr, "Error creating the grid at path_finding_init\n");
+		return 1;
+	}
 	Path path = {.path_length = 0};
 
 	int window_width = (grid_width * grid_cell_size) + 1;
@@ -176,7 +227,7 @@ int main(int argc, char *argv[]){
 				x = event.motion.x / grid_cell_size;
 				y = event.motion.y / grid_cell_size;
 
-				if (x < 0 || x >= N_COLS || y < 0 || y >= N_ROWS){
+				if (x < 0 || x >= n_cols || y < 0 || y >= n_rows){
 					break;
 				}
 
@@ -198,7 +249,7 @@ int main(int argc, char *argv[]){
 			case SDL_MOUSEMOTION:
 				x = event.motion.x / grid_cell_size;
 				y = event.motion.y / grid_cell_size;
-				if (x < 0 || x >= N_COLS || y < 0 || y >= N_ROWS){
+				if (x < 0 || x >= n_cols || y < 0 || y >= n_rows){
 					break;
 				}
 				cursor_ghost.x = (event.motion.x / grid_cell_size) * grid_cell_size;
@@ -271,8 +322,8 @@ int main(int argc, char *argv[]){
 		// Draw barriers
 		SDL_SetRenderDrawColor(renderer, grid_barrier_color.r, grid_barrier_color.g, grid_barrier_color.b, grid_barrier_color.a);
 
-		for (int i = 0; i < N_ROWS; ++i){
-			for (int j = 0; j < N_COLS; ++j){
+		for (int i = 0; i < n_rows; i++){
+			for (int j = 0; j < n_cols; j++){
 				if (get_barrier((Coordinates){j, i})){
 					square.x = j * grid_cell_size;
 					square.y = i * grid_cell_size;
@@ -288,8 +339,8 @@ int main(int argc, char *argv[]){
 		}
 		if (show_visited){
 			SDL_SetRenderDrawColor(renderer, grid_visited_color.r, grid_visited_color.g, grid_visited_color.b, grid_visited_color.a);
-			for (int i = 0; i < N_ROWS; ++i){
-				for (int j = 0; j < N_COLS; ++j){
+			for (int i = 0; i < n_rows; i++){
+				for (int j = 0; j < n_cols; j++){
 					if (get_visited((Coordinates){j, i}) && !get_barrier((Coordinates){j, i}) && (j != a_coord.x || i != a_coord.y) && (j != b_coord.x || i != b_coord.y)){
 						square.x = j * grid_cell_size;
 						square.y = i * grid_cell_size;
@@ -300,7 +351,7 @@ int main(int argc, char *argv[]){
 		}
 
 		SDL_SetRenderDrawColor(renderer, grid_path_color.r, grid_path_color.g, grid_path_color.b, grid_path_color.a);
-		for (int i = 1; i < path.path_length-1; ++i){
+		for (int i = 1; i < path.path_length-1; i++){
 			square.x = path.path[i].x * grid_cell_size;
 			square.y = path.path[i].y * grid_cell_size;
 			SDL_RenderFillRect(renderer, &square);
@@ -332,6 +383,6 @@ int main(int argc, char *argv[]){
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
-
+	path_finding_free();
 	return EXIT_SUCCESS;
 }
