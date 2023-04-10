@@ -72,7 +72,7 @@ void process_key_event(SDL_KeyCode key){
 	case SDLK_m:
 		a_coord.x = 0;
 		a_coord.y = grid_height - 1;
-		b_coord.x = grid_height - 1;
+		b_coord.x = grid_width - 1;
 		b_coord.y = 0;
 		prepare_maze(a_coord, b_coord);
 		re_draw_path = SDL_TRUE;
