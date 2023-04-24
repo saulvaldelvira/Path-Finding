@@ -83,7 +83,7 @@ int path_finding_init(int rows, int cols){
 	}
 	path = (Path){
 		.path_length = 0,
-		.path = malloc(sizeof(Coordinates*) * n_rows * n_cols)
+		.path = malloc(sizeof(Coordinates) * n_rows * n_cols)
 	};
 	if (!path.path){
 		return -1;
