@@ -5,8 +5,10 @@
  * License: MIT
  * Last update: 25-03-2022
 */
+#define SDL_MAIN_HANDLED 
 #include <SDL2/SDL.h>
 #include "path_finding.h"
+#include <stdio.h>
 
 #define CELL_WIDTH 17
 
