@@ -23,7 +23,7 @@ Node* heap_peek(Heap *heap);
 
 Node* heap_pop(Heap *heap);
 
-int heap_change_priority(Heap *heap, Node *node, int g, int h);
+int heap_change_priority(Heap *heap, Node *node, double g, double h);
 
 bool heap_exists(Heap *heap, Node *node);
 

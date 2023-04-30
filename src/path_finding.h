@@ -33,8 +33,8 @@ typedef struct Node{
 
 	int heap_index;
 
-	int g;
-	int h;
+	double g;
+	double h;
 	struct Node *adjacency[8];
 	int n_adjacencies;
 } Node;

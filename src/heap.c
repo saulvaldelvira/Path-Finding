@@ -23,8 +23,8 @@ static void filter_up(Heap *heap, int pos){
         }
 
         int father = (pos-1) / 2;
-        int pos_f = heap->elements[pos]->g + heap->elements[pos]->h;
-        int father_f = heap->elements[father]->g + heap->elements[father]->h;
+        double pos_f = heap->elements[pos]->g + heap->elements[pos]->h;
+        double father_f = heap->elements[father]->g + heap->elements[father]->h;
 
         if (father_f <= pos_f){
                 return;
@@ -49,8 +49,8 @@ static int lowest_child(Heap *heap, int pos){
 	}else if (r_child >= size){
 		return l_child;
 	}else{
-                int left_f = heap->elements[l_child]->g + heap->elements[l_child]->h;
-                int right_f = heap->elements[r_child]->g + heap->elements[r_child]->h;
+                double left_f = heap->elements[l_child]->g + heap->elements[l_child]->h;
+                double right_f = heap->elements[r_child]->g + heap->elements[r_child]->h;
 		if (left_f <= right_f){
 			return l_child;
 		}else{
@@ -65,8 +65,8 @@ static void filter_down(Heap *heap, int pos){
                 return;
         }
 
-        int lowest_f = heap->elements[lowest]->g + heap->elements[lowest]->h;
-        int pos_f = heap->elements[pos]->g + heap->elements[pos]->h;
+        double lowest_f = heap->elements[lowest]->g + heap->elements[lowest]->h;
+        double pos_f = heap->elements[pos]->g + heap->elements[pos]->h;
         if (lowest_f >= pos_f){
                 return;
         }
@@ -95,11 +95,11 @@ Node* heap_pop(Heap *heap){
         return ret;
 }
 
-int heap_change_priority(Heap *heap, Node *node, int g, int h){
+int heap_change_priority(Heap *heap, Node *node, double g, double h){
         if (node->heap_index == -1){
                 return -1;
         }
-        int old_f = heap->elements[node->heap_index]->g + heap->elements[node->heap_index]->h;
+        double old_f = heap->elements[node->heap_index]->g + heap->elements[node->heap_index]->h;
         heap->elements[node->heap_index]->g = g;
         heap->elements[node->heap_index]->h = h;
 

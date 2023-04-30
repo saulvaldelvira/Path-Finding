@@ -1,7 +1,7 @@
 .PHONY: default clean
 
 CC?=gcc
-CCFLAGS= -lSDL2 -O3 -Wall -Wextra
+CCFLAGS= -lSDL2 -lm -O3 -Wall -Wextra
 
 default: path-finding.out
 

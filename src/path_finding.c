@@ -5,10 +5,11 @@
  * Copyright (C) 2023 Saúl Valdelvira
  * License: MIT
  * Last update: 25-03-2022
-*/
+ */
 #include "heap.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 static Node *matrix;
 #define matrix(i,j) matrix[(i) * n_cols + (j)]
@@ -19,33 +20,19 @@ Path path;
 
 bool horizontal_movement = true;
 
+#define abs(n) ((n) < 0 ? -(n) : (n))
+
 /**
  * Adds the node's neighbours to it's adjacency array.
-*/
+ */
 static void get_children(Node *node, int x, int y){
 	int n_adj = 0;
 	Node **adj = node->adjacency;
 	if (x - 1 >= 0){
 		adj[n_adj++] = &matrix(y, x-1);
-		if (horizontal_movement){
-			if (y + 1 < n_rows){
-			adj[n_adj++] = &matrix(y+1, x-1);
-			}
-			if (y - 1 >= 0){
-				adj[n_adj++] = &matrix(y-1,x-1);
-			}
-		}
 	}
 	if (x + 1 < n_cols){
 		adj[n_adj++] = &matrix(y,(x+1));
-		if (horizontal_movement){
-			if (y + 1 < n_rows){
-			adj[n_adj++] = &matrix(y+1,x+1);
-			}
-			if (y - 1 >= 0){
-				adj[n_adj++] = &matrix(y-1,x+1);
-			}
-		}
 	}
 	if (y + 1 < n_rows){
 		adj[n_adj++] = &matrix(y+1,x);
@@ -53,12 +40,31 @@ static void get_children(Node *node, int x, int y){
 	if (y - 1 >= 0){
 		adj[n_adj++] = &matrix((y-1) ,x);
 	}
+	if (horizontal_movement){
+		if (x - 1 >= 0){		
+			if (y + 1 < n_rows){
+				adj[n_adj++] = &matrix(y+1, x-1);
+			}
+			if (y - 1 >= 0){
+				adj[n_adj++] = &matrix(y-1,x-1);
+			}
+		
+		}
+		if (x + 1 < n_cols){
+			if (y + 1 < n_rows){
+				adj[n_adj++] = &matrix(y+1,x+1);
+			}
+			if (y - 1 >= 0){
+				adj[n_adj++] = &matrix(y-1,x+1);
+			}
+		}
+	}
 	node->n_adjacencies = n_adj;
 }
 
 /**
  * Initializes the matrix and the helper structures.
-*/
+ */
 int path_finding_init(int rows, int cols){
 	n_rows = rows;
 	n_cols = cols;
@@ -99,22 +105,24 @@ void path_finding_free(){
 
 /**
  * Heuristic for the A* algorithm.
- * It calculates the euclidean distance between the two
- * coordinates, but without the square root.
- * This saves computing time, and since we do the same with
- * all the nodes, the behaviour of the algorithm shouldn't be affected.
-*/
-static inline int heuristic(Coordinates c1, Coordinates c2){
-	int a = c2.x - c1.x;
-	int b = c2.y - c1.y;
-	return a * a + b * b;
+ * If we're moving in 8 directions, use euclidean distance.
+ * If we're moving in 4 directions, use manhatan distance.
+ */
+static inline double heuristic(Coordinates c1, Coordinates c2){
+	int delt_x = abs(c1.x - c2.x); 
+	int delt_y = abs(c1.y - c2.y);
+	if (horizontal_movement){
+		return sqrt(delt_x * delt_x + delt_y * delt_y);
+	}else{
+		return delt_x + delt_y;
+	}
 }
 
 /**
  * Performs the A* path finding algorithm between the nodes
  * start and end.
  * It returns a Path structure, with an array of coordinates.
-*/
+ */
 Path find_path(Coordinates start, Coordinates end){
 	for (int i = 0; i < n_rows; i++){
 		for (int j = 0; j < n_cols; j++){
@@ -128,13 +136,14 @@ Path find_path(Coordinates start, Coordinates end){
 
 	// Put the start node in the heap
 	Node *start_node = &matrix(start.y ,start.x);
-	start_node->g = 0;
-	start_node->h = 0;
+	start_node->g = 0.0;
+	start_node->h = 0.0;
 	heap_add(&open, start_node);
 
+	Coordinates prev_coord = {0};
+	
 	while (open.n_elements > 0){
 		Node *current = heap_pop(&open);
-
 		if (current->coord.x == end.x && current->coord.y == end.y){
 			break;
 		}
@@ -142,15 +151,31 @@ Path find_path(Coordinates start, Coordinates end){
 		current->visited = true;
 		current->closed = true;
 
+		Coordinates diff1 = {
+			.x = current->coord.x - prev_coord.x,
+			.y = current->coord.y - prev_coord.y
+		};
+		
 		for (int i = 0; i < current->n_adjacencies; ++i){
 			Node *child = current->adjacency[i];
 			if (child->barrier){
 				continue;
 			}
 
-			int g = current->g + 1;
-			int h = heuristic(child->coord, end);
+			double g = current->g + 1;
+			double h = heuristic(child->coord, end);
 
+			Coordinates diff2 = {
+				.x = child->coord.x - current->coord.x,
+				.y = child->coord.y - current->coord.y
+			};
+
+			// Slightly penalize changing direction
+			bool turn = diff1.x != diff2.x || diff1.y != diff2.y;
+			if (turn){
+				h += 0.001;
+			}			     
+					
 			if (child->closed){
 				if (g >= child->g){
 					continue;
@@ -170,9 +195,8 @@ Path find_path(Coordinates start, Coordinates end){
 				}
 				child->parent = current;
 			}
-
 		}
-
+		prev_coord = current->coord;
 	}
 	// Trace back the path
 	path.path_length = 0;
@@ -181,7 +205,7 @@ Path find_path(Coordinates start, Coordinates end){
 		path.path[path.path_length++] = n->coord;
 		n = n->parent;
 	}while(n);
-
+	
 	return path;
 }
 
@@ -201,7 +225,7 @@ bool get_barrier(Coordinates c){
  * Prepares a "maze template".
  * This means, it fills with barriers all the grid, except pa and pb,
  * which are the two points of the grid.
-*/
+ */
 void prepare_maze(Coordinates pa, Coordinates pb){
 	for (int i = 0; i < n_rows; ++i){
 		for (int j = 0; j < n_cols; ++j){
@@ -214,7 +238,7 @@ void prepare_maze(Coordinates pa, Coordinates pb){
 
 /**
  * Clears all the barriers of the grid.
-*/
+ */
 void clear_barriers(){
 	for (int i = 0; i < n_rows; ++i){
 		for (int j = 0; j < n_cols; ++j){
