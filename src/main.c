@@ -33,21 +33,24 @@ Coordinates b_coord;
 Coordinates *coord_to_move;
 
 // Flags
-SDL_bool mouse_active;
-SDL_bool mouse_hover;
+SDL_bool mouse_active = SDL_FALSE;
+SDL_bool mouse_hover = SDL_FALSE;
 SDL_bool re_draw_path = SDL_FALSE;
 SDL_bool show_visited = SDL_TRUE;
 bool animate_search = true;
+bool skip_animation = false;
 
 // Colors
 SDL_Color grid_background;
 SDL_Color grid_line_color;
 SDL_Color cursor_ghost_color;
 SDL_Color point_color;
-SDL_Color grid_visited_color;
-SDL_Color grid_barrier_color;
+SDL_Color grid_visited_color = {83, 82, 82, 0.42};
+SDL_Color grid_barrier_color = {32, 104, 225, 0.8};
+SDL_Color grid_path_color = {246, 204, 46, 0.91};
 
 SDL_Renderer *renderer;
+Path path = {0};
 
 // Elements
 SDL_Rect point_a;
@@ -73,6 +76,7 @@ void process_key_event(SDL_KeyCode key);
 void move_point(int x, int y);
 void barrier(int x, int y);
 void set_theme();
+void draw_path();
 
 int main(int argc, char *argv[]){
         n_rows = N_ROWS;
@@ -116,7 +120,6 @@ int main(int argc, char *argv[]){
 		fprintf(stderr, "Error creating the grid at path_finding_init\n");
 		return 1;
 	}
-	Path path = {.path_length = 0};
 
 	window_width = (n_cols * grid_cell_size) + 1;
 	window_height = (n_rows * grid_cell_size) + 1;
@@ -152,10 +155,6 @@ int main(int argc, char *argv[]){
 
 	set_theme();
 
-	grid_barrier_color = (SDL_Color){32, 104, 225, 0.8}; // Blue
-	SDL_Color grid_path_color = {246, 204, 46, 0.91}; // Yellow
-	grid_visited_color = (SDL_Color){83, 82, 82, 0.42};
-
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Initialize SDL: %s", SDL_GetError());
 		return EXIT_FAILURE;
@@ -170,8 +169,6 @@ int main(int argc, char *argv[]){
 	SDL_SetWindowTitle(window, "Path Finding");
 
 	SDL_bool quit = SDL_FALSE;
-	mouse_active = SDL_FALSE;
-	mouse_hover = SDL_FALSE;
 	SDL_bool click = SDL_FALSE;
 
 	Coordinates last_clicked;
@@ -259,20 +256,16 @@ int main(int argc, char *argv[]){
 			path = find_path(a_coord, b_coord);
 			re_draw_path = SDL_FALSE;
 			if (animate_search){
-				_sleep(200);
+				if (skip_animation){
+					skip_animation = false;
+				}else{
+					_sleep(200);
+				}
 			}
 		}
 
 		if (!(animate_search && click)){
-			if (show_visited){
-				draw_visited();
-			}
-			SDL_SetRenderDrawColor(renderer, grid_path_color.r, grid_path_color.g, grid_path_color.b, grid_path_color.a);
-			for (int i = 1; i < path.path_length-1; i++){
-				square.x = path.path[i].x * grid_cell_size;
-				square.y = path.path[i].y * grid_cell_size;
-				SDL_RenderFillRect(renderer, &square);
-			}
+			draw_path(path);
 		}
 		post_draw();
 		_sleep(10);		
@@ -331,6 +324,7 @@ void process_key_event(SDL_KeyCode key){
 		b_coord.y = 0;
 		prepare_maze(a_coord, b_coord);
 		re_draw_path = SDL_TRUE;
+		skip_animation = true;
 		break;
 	case SDLK_c:
 		a_coord.x = (n_cols - 1) / 2;
@@ -339,6 +333,7 @@ void process_key_event(SDL_KeyCode key){
 		b_coord.y = (n_rows - 1) / 2;
 		clear_barriers();
 		re_draw_path = SDL_TRUE;
+		skip_animation = true;
 		break;
 	case SDLK_v:
 		show_visited = !show_visited;
@@ -439,6 +434,18 @@ void draw_visited(){
 				SDL_RenderFillRect(renderer, &square);
 			}
 		}
+	}
+}
+
+void draw_path(){
+	if (show_visited){
+		draw_visited();
+	}
+	SDL_SetRenderDrawColor(renderer, grid_path_color.r, grid_path_color.g, grid_path_color.b, grid_path_color.a);
+	for (int i = 1; i < path.path_length-1; i++){
+		square.x = path.path[i].x * grid_cell_size;
+		square.y = path.path[i].y * grid_cell_size;
+		SDL_RenderFillRect(renderer, &square);
 	}
 }
 

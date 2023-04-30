@@ -16,7 +16,7 @@ static Node *matrix;
 extern int n_rows;
 extern int n_cols;
 Heap open;
-Path path;
+static Path path;
 
 // Defined in main.c, determines if the
 // steps of the search must be rendered
