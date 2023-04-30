@@ -10,14 +10,10 @@
 #define PATH_FINDING_H
 
 #include <stdbool.h>
+#include "heuristic.h"
 
 #define N_ROWS 50
 #define N_COLS 90
-
-typedef struct Coordinates {
-	int x;
-	int y;
-} Coordinates;
 
 typedef struct Path {
         Coordinates *path;
@@ -40,7 +36,7 @@ typedef struct Node{
 } Node;
 
 void set_break_search();
-Path find_path(Coordinates start, Coordinates end);
+Path find_path(Coordinates start, Coordinates end, heuristic_function heuristic);
 
 void put_barrier(Coordinates c);
 bool get_barrier(Coordinates c);

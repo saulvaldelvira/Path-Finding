@@ -13,8 +13,9 @@ A line will allways draw the shortest path between those
 two points, as long as there is one.
 
 ### Arguments:
-- `d <n_rows>x<n_cols>` : Set dimensions for the grid
-- `w <width>` : Set width of grid's cells
+- `-d <n_rows>x<n_cols>` : Set dimensions for the grid
+- `-w <width>` : Set width of grid's cells
+- `--heuristic <name>`: Set the heuristic to use
 
 ### Keybindings:
 - `A`: Display a search animation while traversing the grid

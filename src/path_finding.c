@@ -7,6 +7,7 @@
  * Last update: 25-03-2022
  */
 #include "heap.h"
+#include "path_finding.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -25,7 +26,10 @@ bool horizontal_movement = true;
 bool break_search;
 void take_step();
 
-#define abs(n) ((n) < 0 ? -(n) : (n))
+// Costs for moving in line (C1)
+// and in diagonal (C2)
+const double C1 = 1.0;
+const double C2 = sqrt(2);
 
 /**
  * Adds the node's neighbours to it's adjacency array.
@@ -107,26 +111,18 @@ void path_finding_free(){
 }
 
 /**
- * Heuristic for the A* algorithm.
- * If we're moving in 8 directions, use euclidean distance.
- * If we're moving in 4 directions, use manhatan distance.
- */
-static inline double heuristic(Coordinates c1, Coordinates c2){
-	int delt_x = abs(c1.x - c2.x); 
-	int delt_y = abs(c1.y - c2.y);
-	if (horizontal_movement){
-		return sqrt(delt_x * delt_x + delt_y * delt_y);
-	}else{
-		return delt_x + delt_y;
-	}
-}
-
-/**
  * Performs the A* path finding algorithm between the nodes
  * start and end.
  * It returns a Path structure, with an array of coordinates.
  */
-Path find_path(Coordinates start, Coordinates end){
+Path find_path(Coordinates start, Coordinates end, heuristic_function heuristic){
+	if (!heuristic){
+		if (horizontal_movement){
+			heuristic = heuristic_euclidean;
+		}else{
+			heuristic = heuristic_manhatan;
+		}
+	}
 	break_search = false;
 	for (int i = 0; i < n_rows; i++){
 		for (int j = 0; j < n_cols; j++){
@@ -170,7 +166,15 @@ Path find_path(Coordinates start, Coordinates end){
 				continue;
 			}
 
-			double g = current->g + 1;
+			double g = current->g;
+			bool diagonal = current->coord.x != child->coord.x
+				        && current->coord.y != child->coord.y;
+			if (diagonal){
+				g += C2;
+			}else{
+				g += C1;
+			}
+
 			double h = heuristic(child->coord, end);
 
 			Coordinates diff2 = {

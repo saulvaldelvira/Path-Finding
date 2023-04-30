@@ -51,6 +51,7 @@ SDL_Color grid_path_color = {246, 204, 46, 0.91};
 
 SDL_Renderer *renderer;
 Path path = {0};
+heuristic_function heuristic = NULL;
 
 // Elements
 SDL_Rect point_a;
@@ -114,6 +115,41 @@ int main(int argc, char *argv[]){
 			help();
 			return 0;
 			break;
+		default:
+			break;
+		}
+		if (argv[i][1] == '-'){
+			if (strcmp(&argv[i][2], "heuristic") == 0){
+				if (argc <= i+1){
+					fprintf(stderr, "Available:\n"
+						        "\t- blind (no heuristic, behaves like dijkstra)\n"
+						        "\t- manhatan\n"
+						        "\t- euclidean\n");
+					exit(1);
+				}
+				if (strcmp(argv[++i], "blind") == 0){
+					heuristic = heuristic_blind;
+				}
+				else if (strcmp(argv[i], "manhatan") == 0){
+					heuristic = heuristic_manhatan;
+				}
+				else if (strcmp(argv[i], "euclidean") == 0){
+					heuristic = heuristic_euclidean;
+				}
+				else{
+					fprintf(stderr, "Invalid argument to --heuristic: %s\n", argv[i]);
+					exit(1);
+				}
+			}
+			else if(strcmp(&argv[i][2], "help") == 0){
+				help();
+				exit(0);
+			}
+			else{
+				fprintf(stderr, "Invalid option: %s\n", &argv[i][2]);
+				exit(1);
+			}
+
 		}
 	}
 	if (path_finding_init() != 1){
@@ -253,7 +289,7 @@ int main(int argc, char *argv[]){
 
 		// Draw path
 		if (re_draw_path && (!animate_search || !click)){
-			path = find_path(a_coord, b_coord);
+			path = find_path(a_coord, b_coord, heuristic);
 			re_draw_path = SDL_FALSE;
 			if (animate_search){
 				if (skip_animation){
@@ -472,6 +508,7 @@ void help(){
 		"Arguments:\n"
 		"\t-d <n_rows>x<n_cols> : Set dimensions for the grid\n"
 		"\t-w <width> : Set width of grid's cells\n"
+		"\t--heuristic <name>: Set the heuristic to use\n"
 		"Keybindings:\n"
 		"\t A: Display a search animation while traversing the grid\n"
 		"\t V: Color the blocks which have been visited during the search.\n"
