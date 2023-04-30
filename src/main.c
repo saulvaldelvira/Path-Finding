@@ -390,6 +390,9 @@ void process_key_event(SDL_KeyCode key){
 		random_barriers(a_coord, b_coord);
 		re_draw_path = SDL_TRUE;
 		break;
+        case SDLK_F5:
+		re_draw_path = SDL_TRUE;
+		break;
 	default:
 		break;
 	}
@@ -520,5 +523,6 @@ void help(){
 		"\t M: Fill all the grid with obstacles, so you can draw a maze.\n"
 		"\t C: Clear the grid.\n"
 		"\t T: Switch between dark and light theme\n"
-		"\t H: Toggle horizontal movement on and off\n");
+		"\t H: Toggle horizontal movement on and off\n"
+		"\t F5: Redraw path\n");
 }

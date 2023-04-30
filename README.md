@@ -25,6 +25,7 @@ two points, as long as there is one.
 - `C`: Clear the grid
 - `T`: Switch between dark and light theme
 - `H`: Toggle horizontal movement on and off
+- `F5`: Redraw path
 
 ### How:
 This program uses the A* algorithm to search for paths. <br/>
