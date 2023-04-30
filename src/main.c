@@ -18,7 +18,7 @@
 #    define _sleep(ms) Sleep(ms)
 #endif
 
-#define CELL_WIDTH 17
+#define CELL_WIDTH 20
 
 // Dimensions
 int grid_cell_size;
@@ -122,9 +122,9 @@ int main(int argc, char *argv[]){
 			if (strcmp(&argv[i][2], "heuristic") == 0){
 				if (argc <= i+1){
 					fprintf(stderr, "Available:\n"
-						        "\t- blind (no heuristic, behaves like dijkstra)\n"
-						        "\t- manhatan\n"
-						        "\t- euclidean\n");
+						        "- blind (no heuristic, behaves like dijkstra)\n"
+						        "- manhatan\n"
+						        "- euclidean\n");
 					exit(1);
 				}
 				if (strcmp(argv[++i], "blind") == 0){
@@ -144,6 +144,32 @@ int main(int argc, char *argv[]){
 			else if(strcmp(&argv[i][2], "help") == 0){
 				help();
 				exit(0);
+			}
+			else if(strcmp(&argv[i][2], "size") == 0){
+				if (argc <= i+1){
+					fprintf(stderr, "Available:\n"
+						        "- small(30x30)\n"
+						        "- medium(45x80). Default\n"
+						        "- large(70x120)\n");
+					exit(1);
+				}
+				if (strcmp(argv[++i], "small") == 0){
+					n_rows = 30;
+					n_cols = 30;
+					grid_cell_size = 25;
+				}
+				else if (strcmp(argv[i], "medium") == 0){
+					n_rows = 45;
+					n_cols = 80;
+				}
+				else if (strcmp(argv[i], "large") == 0){
+					n_rows = 85;
+					n_cols = 150;
+					grid_cell_size = 11;
+				}else{
+					fprintf(stderr, "Invalid argument to --size: %s\n", argv[i]);
+					exit(1);
+				}
 			}
 			else{
 				fprintf(stderr, "Invalid option: %s\n", &argv[i][2]);
@@ -516,6 +542,7 @@ void help(){
 		"\t-d <n_rows>x<n_cols> : Set dimensions for the grid\n"
 		"\t-w <width> : Set width of grid's cells\n"
 		"\t--heuristic <name>: Set the heuristic to use\n"
+		"\t--size [small|medium|large]: Set the size of the grid\n"
 		"Keybindings:\n"
 		"\t A: Display a search animation while traversing the grid\n"
 		"\t V: Color the blocks which have been visited during the search.\n"

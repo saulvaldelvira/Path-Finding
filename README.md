@@ -16,6 +16,7 @@ two points, as long as there is one.
 - `-d <n_rows>x<n_cols>` : Set dimensions for the grid
 - `-w <width>` : Set width of grid's cells
 - `--heuristic <name>`: Set the heuristic to use
+- `--size [small|medium|large]`: Set the size of the grid
 
 ### Keybindings:
 - `A`: Display a search animation while traversing the grid
@@ -28,7 +29,6 @@ two points, as long as there is one.
 - `F5`: Redraw path
 
 ### How:
-This program uses the A* algorithm to search for paths. <br/>
-More info: <https://en.wikipedia.org/wiki/A*_search_algorithm>
+This program uses the [A* algorithm](https://en.wikipedia.org/wiki/A*_search_algorithm) to search for paths. <br/>
 
 ![Screenshot](https://img.saulv.es/path_finding.gif)

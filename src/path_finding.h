@@ -12,8 +12,8 @@
 #include <stdbool.h>
 #include "heuristic.h"
 
-#define N_ROWS 50
-#define N_COLS 90
+#define N_ROWS 45
+#define N_COLS 80
 
 typedef struct Path {
         Coordinates *path;
