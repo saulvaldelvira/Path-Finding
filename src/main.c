@@ -10,6 +10,12 @@
 #include "path_finding.h"
 #include <stdio.h>
 
+#ifdef __unix__
+    #include <unistd.h>
+#elif _WIN32
+    #include <windows.h>
+#endif
+
 #define CELL_WIDTH 17
 
 int grid_cell_size;
@@ -391,6 +397,12 @@ int main(int argc, char *argv[]){
 		}
 
 		SDL_RenderPresent(renderer);
+
+		#ifdef __unix__
+		usleep(10000);
+		#elif _WIN32
+		Sleep(10);
+		#endif
 	}
 
 
