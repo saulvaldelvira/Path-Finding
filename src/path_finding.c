@@ -27,10 +27,7 @@ bool horizontal_movement = true;
 bool break_search;
 void take_step();
 
-// Costs for moving in line (C1)
-// and in diagonal (C2)
-const double C1 = 1.0;
-const double C2 = sqrt(2);
+#define abs(n) ((n) < 0 ? -(n) : (n))
 
 /**
  * Adds the node's neighbours to it's adjacency array.
@@ -111,6 +108,14 @@ void path_finding_free(){
 	free(path.path);
 }
 
+static inline double distance(Coordinates c1, Coordinates c2){
+	if (horizontal_movement){
+		return sqrt((c2.x - c1.x) * (c2.x - c1.x) + (c2.y - c1.y) * (c2.y - c1.y));
+	}else{
+		return abs(c2.x - c1.x) + abs(c2.y - c1.y);
+	}
+}
+
 /**
  * Performs the A* path finding algorithm between the nodes
  * start and end.
@@ -167,15 +172,7 @@ Path find_path(Coordinates start, Coordinates end, heuristic_function heuristic)
 				continue;
 			}
 
-			double g = current->g;
-			bool diagonal = current->coord.x != child->coord.x
-				        && current->coord.y != child->coord.y;
-			if (diagonal){
-				g += C2;
-			}else{
-				g += C1;
-			}
-
+			double g = current->g + distance(current->coord, child->coord);
 			double h = heuristic(child->coord, end);
 
 			Coordinates diff2 = {
