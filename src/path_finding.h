@@ -48,6 +48,7 @@ void path_finding_free();
 
 void prepare_maze(Coordinates pa, Coordinates pb);
 void clear_barriers();
+void random_barriers(Coordinates pa, Coordinates pb);
 
 void switch_horizontal_movement();
 

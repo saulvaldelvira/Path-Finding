@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <time.h>
 
 static Node *matrix;
 #define matrix(i,j) matrix[(i) * n_cols + (j)]
@@ -243,6 +244,22 @@ void prepare_maze(Coordinates pa, Coordinates pb){
 		for (int j = 0; j < n_cols; ++j){
 			if ((j != pa.x || i != pa.y) && (j != pb.x || i != pb.y)){
 				matrix(i ,j).barrier = true;
+			}
+		}
+	}
+}
+
+void random_barriers(Coordinates pa, Coordinates pb){
+	srand(time(NULL));
+	for (int i = 0; i < n_rows; ++i){
+		for (int j = 0; j < n_cols; ++j){
+			if ((j != pa.x || i != pa.y) && (j != pb.x || i != pb.y)){
+				int r = rand() % 100;
+				if (r >= 60){
+					matrix(i ,j).barrier = true;
+				}else{
+					matrix(i ,j).barrier = false;
+				}
 			}
 		}
 	}

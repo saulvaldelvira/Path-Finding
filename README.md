@@ -20,6 +20,7 @@ two points, as long as there is one.
 ### Keybindings:
 - `A`: Display a search animation while traversing the grid
 - `V`: Color the blocks which have been visited during the search
+- `R`: Generate a grid with random obstacles
 - `M`: Fill all the grid with obstacles, so you can draw a maze
 - `C`: Clear the grid
 - `T`: Switch between dark and light theme

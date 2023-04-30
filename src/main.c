@@ -386,6 +386,10 @@ void process_key_event(SDL_KeyCode key){
 		animate_search = !animate_search;
 		re_draw_path = SDL_TRUE;
 		break;
+	case SDLK_r:
+		random_barriers(a_coord, b_coord);
+		re_draw_path = SDL_TRUE;
+		break;
 	default:
 		break;
 	}
@@ -512,6 +516,7 @@ void help(){
 		"Keybindings:\n"
 		"\t A: Display a search animation while traversing the grid\n"
 		"\t V: Color the blocks which have been visited during the search.\n"
+		"\t R: Generate a grid with random obstacles\n"
 		"\t M: Fill all the grid with obstacles, so you can draw a maze.\n"
 		"\t C: Clear the grid.\n"
 		"\t T: Switch between dark and light theme\n"
