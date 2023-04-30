@@ -13,12 +13,17 @@
 
 static Node *matrix;
 #define matrix(i,j) matrix[(i) * n_cols + (j)]
-int n_rows;
-int n_cols;
+extern int n_rows;
+extern int n_cols;
 Heap open;
 Path path;
 
+// Defined in main.c, determines if the
+// steps of the search must be rendered
+extern bool animate_search;
 bool horizontal_movement = true;
+bool break_search;
+void take_step();
 
 #define abs(n) ((n) < 0 ? -(n) : (n))
 
@@ -65,9 +70,7 @@ static void get_children(Node *node, int x, int y){
 /**
  * Initializes the matrix and the helper structures.
  */
-int path_finding_init(int rows, int cols){
-	n_rows = rows;
-	n_cols = cols;
+int path_finding_init(){
 	matrix = malloc(n_rows * n_cols * sizeof(*matrix));
 	if (!matrix){
 		return -1;
@@ -124,6 +127,7 @@ static inline double heuristic(Coordinates c1, Coordinates c2){
  * It returns a Path structure, with an array of coordinates.
  */
 Path find_path(Coordinates start, Coordinates end){
+	break_search = false;
 	for (int i = 0; i < n_rows; i++){
 		for (int j = 0; j < n_cols; j++){
 			matrix(i ,j).parent = NULL;
@@ -142,7 +146,7 @@ Path find_path(Coordinates start, Coordinates end){
 
 	Coordinates prev_coord = {0};
 	
-	while (open.n_elements > 0){
+	while (open.n_elements > 0 && !break_search){
 		Node *current = heap_pop(&open);
 		if (current->coord.x == end.x && current->coord.y == end.y){
 			break;
@@ -150,6 +154,10 @@ Path find_path(Coordinates start, Coordinates end){
 
 		current->visited = true;
 		current->closed = true;
+
+		if (animate_search){
+			take_step();
+		}
 
 		Coordinates diff1 = {
 			.x = current->coord.x - prev_coord.x,
@@ -254,4 +262,8 @@ void switch_horizontal_movement(){
 			get_children(&matrix(i ,j), j, i);
 		}
 	}
+}
+
+void set_break_search(){
+	break_search = true;
 }

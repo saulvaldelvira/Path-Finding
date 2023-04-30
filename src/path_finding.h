@@ -39,6 +39,7 @@ typedef struct Node{
 	int n_adjacencies;
 } Node;
 
+void set_break_search();
 Path find_path(Coordinates start, Coordinates end);
 
 void put_barrier(Coordinates c);
@@ -46,7 +47,7 @@ bool get_barrier(Coordinates c);
 
 bool get_visited(Coordinates c);
 
-int path_finding_init(int n_rows, int n_cols);
+int path_finding_init();
 void path_finding_free();
 
 void prepare_maze(Coordinates pa, Coordinates pb);

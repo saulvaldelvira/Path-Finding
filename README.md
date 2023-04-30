@@ -14,8 +14,9 @@ You can move them (left mouse click) and place obstacles (right mouse click). <b
 A line will allways draw the shortest path between those
 two points, as long as there is one.
 
-### Keys:
-- `V`: Also color the blocks which have been visited during the search
+### Keybindings:
+- `A`: Display a search animation while traversing the grid
+- `V`: Color the blocks which have been visited during the search
 - `M`: Fill all the grid with obstacles, so you can draw a maze
 - `C`: Clear the grid
 - `T`: Switch between dark and light theme
