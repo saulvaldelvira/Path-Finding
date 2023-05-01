@@ -124,7 +124,8 @@ int main(int argc, char *argv[]){
 					fprintf(stderr, "Available:\n"
 						        "- blind (no heuristic, behaves like dijkstra)\n"
 						        "- manhatan\n"
-						        "- euclidean\n");
+						        "- euclidean\n"
+						        "- diagonal\n");
 					exit(1);
 				}
 				if (strcmp(argv[++i], "blind") == 0){
@@ -135,6 +136,9 @@ int main(int argc, char *argv[]){
 				}
 				else if (strcmp(argv[i], "euclidean") == 0){
 					heuristic = heuristic_euclidean;
+				}
+				else if (strcmp(argv[i], "diagonal") == 0){
+					heuristic = heuristic_diagonal;
 				}
 				else{
 					fprintf(stderr, "Invalid argument to --heuristic: %s\n", argv[i]);

@@ -2,6 +2,7 @@
 
 #include <math.h>
 #define abs(n) ((n) < 0 ? -(n) : (n))
+#define max(a,b) ((a) >= (b) ? (a) : (b))
 
 double heuristic_manhatan(Coordinates c1, Coordinates c2){
 	int delt_x = abs(c1.x - c2.x); 
@@ -13,6 +14,12 @@ double heuristic_euclidean(Coordinates c1, Coordinates c2){
 	int delt_x = abs(c1.x - c2.x); 
 	int delt_y = abs(c1.y - c2.y);
 	return sqrt(delt_x * delt_x + delt_y * delt_y);
+}
+
+double heuristic_diagonal(Coordinates c1, Coordinates c2){
+	int delt_x = abs(c1.x - c2.x); 
+	int delt_y = abs(c1.y - c2.y);
+	return max(delt_x, delt_y);
 }
 
 double heuristic_blind(Coordinates c1, Coordinates c2){
