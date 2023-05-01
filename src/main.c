@@ -532,10 +532,10 @@ void take_step(){
 		}
 		pending_event = true;
 	}
+	// TODO: Optimize this! It's called in EVERY step
 	pre_draw();
 	draw_visited();
 	post_draw();
-	_sleep(1);
 }
 
 void help(){
