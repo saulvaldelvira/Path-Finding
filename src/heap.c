@@ -26,9 +26,13 @@ static void filter_up(Heap *heap, int pos){
         double pos_f = heap->elements[pos]->g + heap->elements[pos]->h;
         double father_f = heap->elements[father]->g + heap->elements[father]->h;
 
-        if (father_f <= pos_f){
+        if (father_f < pos_f){
                 return;
-        }
+        }else if(father_f == pos_f){
+		if (heap->elements[father]->h <= heap->elements[pos]->h){
+			return;
+		}
+	}
 
         heap_swap(heap, father, pos);
 
@@ -51,11 +55,14 @@ static int lowest_child(Heap *heap, int pos){
 	}else{
                 double left_f = heap->elements[l_child]->g + heap->elements[l_child]->h;
                 double right_f = heap->elements[r_child]->g + heap->elements[r_child]->h;
-		if (left_f <= right_f){
+		if (left_f < right_f){
 			return l_child;
-		}else{
-			return r_child;
+		}else if(left_f == right_f){
+			if (heap->elements[l_child]->h <= heap->elements[r_child]->h){
+				return l_child;
+			}
 		}
+		return r_child;
 	}
 }
 
@@ -67,9 +74,13 @@ static void filter_down(Heap *heap, int pos){
 
         double lowest_f = heap->elements[lowest]->g + heap->elements[lowest]->h;
         double pos_f = heap->elements[pos]->g + heap->elements[pos]->h;
-        if (lowest_f >= pos_f){
+        if (lowest_f > pos_f){
                 return;
-        }
+        }else if(lowest_f == pos_f){
+		if (heap->elements[lowest]->h >= heap->elements[pos]->h){
+			return;
+		}
+	}
 
         heap_swap(heap, lowest, pos);
 	filter_down(heap, lowest);
