@@ -1,11 +1,8 @@
 /**
- * Graphic/main program
- *
- * Copyright (C) 2023 Saúl Valdelvira
- * License: MIT
- * Last update: 25-03-2022
+ * Main program
+ * Author: Saúl Valdelvira (2023)
  */
-#define SDL_MAIN_HANDLED 
+#define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
 #include "path_finding.h"
 #include <stdio.h>
@@ -334,7 +331,7 @@ int main(int argc, char *argv[]){
 			draw_path(path);
 		}
 		post_draw();
-		_sleep(10);		
+		_sleep(10);
 	}
 
 

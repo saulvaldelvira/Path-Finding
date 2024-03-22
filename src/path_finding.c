@@ -1,10 +1,6 @@
-/**
- * Logic part of the program.
+/*
  * Path finding algorithm.
- *
- * Copyright (C) 2023 Saúl Valdelvira
- * License: MIT
- * Last update: 25-03-2022
+ * Author: Saúl Valdelvira (2023)
  */
 #include "heap.h"
 #include "path_finding.h"
@@ -48,14 +44,14 @@ static void get_children(Node *node, int x, int y){
 		adj[n_adj++] = &matrix((y-1) ,x);
 	}
 	if (horizontal_movement){
-		if (x - 1 >= 0){		
+		if (x - 1 >= 0){
 			if (y + 1 < n_rows){
 				adj[n_adj++] = &matrix(y+1, x-1);
 			}
 			if (y - 1 >= 0){
 				adj[n_adj++] = &matrix(y-1,x-1);
 			}
-		
+
 		}
 		if (x + 1 < n_cols){
 			if (y + 1 < n_rows){
@@ -147,7 +143,7 @@ Path find_path(Coordinates start, Coordinates end, heuristic_function heuristic)
 	heap_add(&open, start_node);
 
 	Coordinates prev_coord = {0};
-	
+
 	while (open.n_elements > 0 && !break_search){
 		Node *current = heap_pop(&open);
 		if (current->coord.x == end.x && current->coord.y == end.y){
@@ -165,7 +161,7 @@ Path find_path(Coordinates start, Coordinates end, heuristic_function heuristic)
 			.x = current->coord.x - prev_coord.x,
 			.y = current->coord.y - prev_coord.y
 		};
-		
+
 		for (int i = 0; i < current->n_adjacencies; ++i){
 			Node *child = current->adjacency[i];
 			if (child->barrier){
@@ -184,8 +180,8 @@ Path find_path(Coordinates start, Coordinates end, heuristic_function heuristic)
 			bool turn = diff1.x != diff2.x || diff1.y != diff2.y;
 			if (turn){
 				h += 0.001;
-			}			     
-					
+			}
+
 			if (child->closed){
 				if (g >= child->g){
 					continue;
@@ -215,7 +211,7 @@ Path find_path(Coordinates start, Coordinates end, heuristic_function heuristic)
 		path.path[path.path_length++] = n->coord;
 		n = n->parent;
 	}while(n);
-	
+
 	return path;
 }
 

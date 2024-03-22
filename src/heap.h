@@ -1,9 +1,6 @@
-/**
+/*
  * Heap structure to support the A* algorithm
- *
- * Copyright (C) 2023 Saúl Valdelvira
- * License: MIT
- * Last update: 25-03-2022
+ * Author: Saúl Valdelvira (2023)
 */
 #pragma once
 #ifndef HEAP_H

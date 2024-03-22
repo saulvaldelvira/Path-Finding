@@ -1,10 +1,6 @@
 /**
  * Logic part of the program.
- * Path finding algorithm.
- *
- * Copyright (C) 2023 Saúl Valdelvira
- * License: MIT
- * Last update: 25-03-2022
+ * Author: Saúl Valdelvira (2023)
 */
 #ifndef PATH_FINDING_H
 #define PATH_FINDING_H

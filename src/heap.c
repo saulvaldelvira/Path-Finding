@@ -1,9 +1,6 @@
 /**
  * Heap implementation
- *
- * Copyright (C) 2023 Saúl Valdelvira
- * License: MIT
- * Last update: 25-03-2022
+ * Author: Saúl Valdelvira (2023)
 */
 #include "heap.h"
 
