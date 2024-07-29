@@ -3,6 +3,7 @@
  * Author: Saúl Valdelvira (2023)
  */
 #include "heap.h"
+#include "args.h"
 #include "path_finding.h"
 #include <stdio.h>
 #include <stdlib.h>
